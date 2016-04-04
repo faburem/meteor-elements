@@ -57,19 +57,21 @@ Polymer({
   logout : function() {
     Meteor.logout();
   },
-  ready: function() {
-    this._userComputation = Tracker.autorun(function() {
-      var user = Meteor.user();
+  attached: function() {
+    this.async(function(){
+      var Tracker = require("meteor/tracker").Tracker;
+      this._userComputation = Tracker.autorun(function() {
+        var user = Meteor.user();
 
-      this._setId(user ? user._id : null);
-      this._setUser(user);
-      this._setLoggedIn(user != null);
-    }.bind(this));
+        this._setId(user ? user._id : null);
+        this._setUser(user);
+        this._setLoggedIn(user != null);
+      }.bind(this));
 
-    this._loggingInComputation = Tracker.autorun(function() {
-      this._setLoggingIn(Meteor.loggingIn());
-    }.bind(this));
-
+      this._loggingInComputation = Tracker.autorun(function() {
+        this._setLoggingIn(Meteor.loggingIn());
+      }.bind(this));
+    });
   },
   detached: function() {
     if (this._userComputation)
